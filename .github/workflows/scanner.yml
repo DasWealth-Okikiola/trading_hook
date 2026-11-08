@@ -1,0 +1,29 @@
+name: 15-Min ICT Multi Scanner
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'  # Runs every 15 minutes automatically
+  workflow_dispatch:       # Allows you to click 'Run workflow' manually anytime on GitHub
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas numpy requests yfinance
+
+      - name: Run Scanner
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          python src/multi_scanner.py
